@@ -1,0 +1,13 @@
+SignUp and Login : 
+    ✔ Check the empty fileds by displaying a message . @done (1/3/2025, 10:19:22 PM)
+
+AuthentificationGuard : 
+    ✔ if users try to access a specifique path that require jwt token they should first login or SignUp . @done (1/3/2025, 10:19:17 PM)
+    ☐ reset password //if i have time i will implement it
+    
+
+
+
+
+
+    

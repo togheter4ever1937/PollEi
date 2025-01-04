@@ -1,0 +1,11 @@
+.empty-field {
+  border: 2px solid red;
+}
+
+.border-red-500 {
+  border: 2px solid #f44336;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}

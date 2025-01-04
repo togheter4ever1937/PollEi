@@ -1,0 +1,4 @@
+Backend : 
+    ☐ verify the berification code sent by the user .
+    ☐ assigne token to autentified users .
+    ☐ include database quesry to store data .
