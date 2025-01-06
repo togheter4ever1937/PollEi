@@ -13,7 +13,7 @@ function mailSender(code, user) {
   const mailOptions = {
     from: process.env.SENDER_EMAIL,
     to: `${user.username} <${user.email}>`,
-    replyTo: "", // You can add a reply-to email address if needed
+    replyTo: "", 
     subject: "Verification Code",
     html: `
     <html>

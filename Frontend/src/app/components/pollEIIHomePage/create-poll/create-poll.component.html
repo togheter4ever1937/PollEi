@@ -1,0 +1,65 @@
+<app-navigationbar></app-navigationbar>
+<div class="container mx-auto p-6 max-w-lg">
+    <form [formGroup]="createPollForm" (ngSubmit)="submitForm()" class="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h2 class="text-2xl font-semibold text-center mb-4">Create a Poll</h2>
+        
+        <div class="mb-4">
+          <label for="pollName" class="block text-sm font-medium text-gray-700">Poll Name</label>
+          <input id="pollName" formControlName="pollName" type="text" 
+                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                 placeholder="Enter poll name" />
+        </div>
+      
+        <div class="mb-4">
+          <label for="question" class="block text-sm font-medium text-gray-700">Question</label>
+          <input id="question" formControlName="question" type="text" 
+                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                 placeholder="Enter the question for the poll" />
+        </div>
+      
+        <div class="mb-4">
+          <label for="start_at" class="block text-sm font-medium text-gray-700">Start Date</label>
+          <input id="start_at" formControlName="start_at" type="datetime-local"
+                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+      
+        <div class="mb-4">
+          <label for="end_time" class="block text-sm font-medium text-gray-700">End Date</label>
+          <input id="end_time" formControlName="end_time" type="datetime-local"
+                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+        </div>
+      
+        <div formArrayName="options" class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Poll Options</label>
+          <div *ngFor="let option of options.controls; let i = index" class="flex items-center space-x-2 mb-2">
+            <input [formControlName]="i" id="option{{i}}" type="text" 
+                   class="flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                   placeholder="Enter an option" />
+            <button type="button" (click)="removeOption(i)" class="text-red-600 hover:text-red-800">
+              Remove
+            </button>
+          </div>
+        </div>
+      
+        <button type="button" (click)="addOption()" 
+                class="w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mb-4">
+          Add Option
+        </button>
+      
+        <button type="submit" [disabled]="!createPollForm.valid" 
+                class="w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+          Submit Poll
+        </button>
+      
+        <div *ngIf="errorMessage" class="mt-4 text-center text-red-600">
+          {{ errorMessage }}
+        </div>
+      </form>
+      
+      <!-- Button to add another option (only if poll is created) -->
+      <button *ngIf="isPollCreated" (click)="addOption()" 
+              class="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-4">
+        Add More Options
+      </button>
+  </div>
+  

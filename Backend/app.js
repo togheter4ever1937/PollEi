@@ -3,6 +3,11 @@ const app = express();
 const cors = require("cors");
 const path = require('path');
 const loginRouter = require("./routes/login");
+const createPoll = require("./routes/createPoll");
+const addOptions = require("./routes/addOptions");
+const activePolls = require("./routes/activePolls");
+const endedPolls = require("./routes/endedPolls");
+const validateVote = require("./routes/validateVote");
 const usersRouter = require("./routes/utilisateur");
 const signupRouter = require("./routes/signup");
 const session = require("express-session");
@@ -23,6 +28,12 @@ app.get("/", (req, res) => {
 app.use("/api", usersRouter);
 app.use("/api", signupRouter);
 app.use("/api", loginRouter);
+app.use("/api", createPoll);
+app.use("/api",addOptions);
+
+
+
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(process.env.PORT, () => {
