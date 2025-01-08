@@ -2,8 +2,10 @@ const router = require("express").Router();
 const db = require("../db/db.connect");
 const checkEmptyFields = require("../middlewares/checkEmptyFields");
 const authentificated = require("../middlewares/autentificated");
+const checkDuplicateOptions = require("../middlewares/checkDuplicateOptions");
+const checkOptionsLength = require("../middlewares/checkOptionsLength");
 
-router.post('/addOptions', authentificated, async (req, res) => {
+router.post('/addOptions', authentificated,checkDuplicateOptions,checkOptionsLength, async (req, res) => {
   const { pollID, options } = req.body;
   console.log(pollID, options);
 

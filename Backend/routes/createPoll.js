@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const db = require("../db/db.connect");
 const authentificated = require("../middlewares/autentificated");
+const validatePollTime = require("../middlewares/ValidatePollTime");
 
-router.post('/createPoll', authentificated, async (req, res) => {
+router.post('/createPoll', authentificated,validatePollTime, async (req, res) => {
   const { title, question, end_time, start_at } = req.body;
   const userID = req.userId;  // Assuming userID is set in the authentificated middleware
   console.log(userID);

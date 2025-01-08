@@ -49,6 +49,10 @@ export class CreatePollComponent implements OnInit {
     return this.addOptionsForm.get('options') as FormArray;
   }
 
+  clearError(): void {
+    this.errorMessage = '';
+  }
+
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe(
       (data: any) => {
@@ -62,27 +66,48 @@ export class CreatePollComponent implements OnInit {
   }
 
   async submitPoll(): Promise<void> {
+    if (this.createPollForm.invalid) {
+      this.errorMessage = 'Please fill out all required fields in the poll form.';
+      return;
+    }
     if (this.createPollForm.valid) {
       const { pollName, question, start_at, end_time } = this.createPollForm.value;
+  
+      // Time validation
+      const startTime = new Date(start_at);
+      const endTime = new Date(end_time);
+      const now = new Date();
+  
+      // Check if start time is in the future or now
+      if (startTime < now) {
+        this.errorMessage = 'Start time must be greater than or equal to the current time.';
+        console.error(this.errorMessage);
+        return;
+      }
+  
+      // Check if the difference between start time and end time is at least 30 minutes
+      const diffInMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60); // Difference in minutes
+      if (diffInMinutes < 30) {
+        this.errorMessage = 'End time must be at least 30 minutes after the start time.';
+        console.error(this.errorMessage);
+        return;
+      }
+  
       console.log('Creating poll:', { pollName, question, start_at, end_time });
   
       this.isPollCreated = true;
+      this.errorMessage = '';
   
       try {
-        // Manually create poll request using HttpClient
         const pollResponse: any = await this.createPoll(pollName, question, start_at, end_time);
         console.log('Poll created response:', pollResponse);
   
-        // Check if the poll was created and contains the pollID
         if (pollResponse && pollResponse.poll && pollResponse.poll.pollID) {
           this.createdPollID = pollResponse.poll.pollID;
           console.log('Poll ID:', this.createdPollID);
   
-          // Access the other poll properties for reuse (e.g., title, question, etc.)
           const { title, question, start_at, end_time } = pollResponse.poll;
           console.log('Poll details:', { title, question, start_at, end_time });
-  
-          // Now you can use this data for adding options or other actions
           console.log('Poll created successfully, now waiting for options...');
         } else {
           console.error('Poll creation failed, invalid response:', pollResponse);
@@ -93,6 +118,7 @@ export class CreatePollComponent implements OnInit {
       }
     }
   }
+  
   
 
   // Manual HTTP call for creating the poll
@@ -127,9 +153,28 @@ export class CreatePollComponent implements OnInit {
 
   // Submit options after the poll is created and the options are filled out
   async submitOptions(): Promise<void> {
+    if (this.addOptionsForm.invalid || this.options.controls.some(control => control.invalid)) {
+      this.errorMessage = 'Please fill out all required fields for options.';
+      return;
+    }
+
+    
+
+    this.errorMessage = '';
     if (this.addOptionsForm.valid && this.createdPollID) {
       const optionsList = this.options.value;  // Get the options entered by the user
       console.log('Options entered:', optionsList);
+
+      const uniqueOptions = new Set(optionsList.map((option: string) => option.toLowerCase()));
+      if (uniqueOptions.size !== optionsList.length) {
+        this.errorMessage = 'Duplicate options are not allowed.';
+        return;
+      }
+
+      if (optionsList.length < 2 || optionsList.length > 10) {
+        this.errorMessage = 'The options list must contain between 2 and 10 options.';
+        return;
+      }
   
       if (optionsList.length > 0) {
         try {
