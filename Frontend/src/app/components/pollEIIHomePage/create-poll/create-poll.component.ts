@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { NavigationbarComponent } from '../../navigationbar/navigationbar.component';
-import { PollService } from '../../../services/Poll/poll.service';  // Assuming this path
+import { HttpClient } from '@angular/common/http';
+import { PollService } from '../../../services/Poll/poll.service';
 import { AuthService } from '../../../services/Auth/auth-service.service';
 import { CommonModule } from '@angular/common';
 
@@ -14,19 +15,27 @@ import { CommonModule } from '@angular/common';
 export class CreatePollComponent implements OnInit {
   user: any;
   createPollForm: FormGroup;
-  isPollCreated: boolean = false;  // Initially false
-  errorMessage: string = '';  // To store any error messages
+  addOptionsForm: FormGroup;
+  isPollCreated: boolean = false;
+  createdPollID: number | null = null; // Store created poll ID
+  errorMessage: string = '';
 
   constructor(
+    private fb: FormBuilder,
     private pollService: PollService,
-    private authService: AuthService,
-    private fb: FormBuilder
+    private http: HttpClient,
+    private authService: AuthService
   ) {
+    // Initialize the create poll form
     this.createPollForm = this.fb.group({
       pollName: ['', Validators.required],
       question: ['', Validators.required],
       start_at: ['', Validators.required],
       end_time: ['', Validators.required],
+    });
+
+    // Initialize the add options form
+    this.addOptionsForm = this.fb.group({
       options: this.fb.array([]),
     });
   }
@@ -35,9 +44,9 @@ export class CreatePollComponent implements OnInit {
     this.getUserInfo();
   }
 
-  // Getter for options form array
+  // Getter for options array
   get options(): FormArray {
-    return this.createPollForm.get('options') as FormArray;
+    return this.addOptionsForm.get('options') as FormArray;
   }
 
   getUserInfo(): void {
@@ -46,13 +55,69 @@ export class CreatePollComponent implements OnInit {
         this.user = data;
       },
       (error: any) => {
-        console.log(error);
+        console.error(error);
+        this.errorMessage = 'Failed to fetch user information.';
       }
     );
   }
 
+  async submitPoll(): Promise<void> {
+    if (this.createPollForm.valid) {
+      const { pollName, question, start_at, end_time } = this.createPollForm.value;
+      console.log('Creating poll:', { pollName, question, start_at, end_time });
+  
+      this.isPollCreated = true;
+  
+      try {
+        // Manually create poll request using HttpClient
+        const pollResponse: any = await this.createPoll(pollName, question, start_at, end_time);
+        console.log('Poll created response:', pollResponse);
+  
+        // Check if the poll was created and contains the pollID
+        if (pollResponse && pollResponse.poll && pollResponse.poll.pollID) {
+          this.createdPollID = pollResponse.poll.pollID;
+          console.log('Poll ID:', this.createdPollID);
+  
+          // Access the other poll properties for reuse (e.g., title, question, etc.)
+          const { title, question, start_at, end_time } = pollResponse.poll;
+          console.log('Poll details:', { title, question, start_at, end_time });
+  
+          // Now you can use this data for adding options or other actions
+          console.log('Poll created successfully, now waiting for options...');
+        } else {
+          console.error('Poll creation failed, invalid response:', pollResponse);
+        }
+      } catch (error) {
+        console.error('Error creating poll:', error);
+        this.errorMessage = 'Failed to create poll. Please try again.';
+      }
+    }
+  }
+  
+
+  // Manual HTTP call for creating the poll
+  createPoll(pollName: string, question: string, start_at: string, end_time: string): Promise<any> {
+    const pollData = {
+      title: pollName,
+      question: question,
+      start_at: start_at,
+      end_time: end_time
+    };
+
+    return this.http.post<any>('http://localhost:3000/api/createPoll', pollData).toPromise();
+  }
+
+  addOptions(pollID: number, options: string[]): Promise<any> {
+    const optionsData = {
+      pollID: pollID,
+      options: options
+    };
+
+    return this.http.post<any>('http://localhost:3000/api/addOptions', optionsData).toPromise();
+  }
+
   addOption(): void {
-    const option = this.fb.control('');
+    const option = this.fb.control('', Validators.required);
     this.options.push(option);
   }
 
@@ -60,44 +125,37 @@ export class CreatePollComponent implements OnInit {
     this.options.removeAt(index);
   }
 
-  submitForm(): void {
-    if (this.createPollForm.valid) {
-      const { pollName, question, start_at, end_time, options } = this.createPollForm.value;
-
-      // Prepare poll data for backend submission
-      const optionsList = options.map((option: string) => option);
-
-      // Call the PollService to create the poll
-      this.pollService.createPoll(pollName, question, start_at, end_time).subscribe(
-        (response: any) => {
-          // If poll creation is successful
-          this.isPollCreated = true;
-          this.errorMessage = ''; // Clear any previous errors
-          console.log('Poll created successfully:', response);
-          // After successful creation, add options if there are any
-          if (optionsList.length > 0) {
-            this.addOptionsToPoll(response.pollID, optionsList);
+  // Submit options after the poll is created and the options are filled out
+  async submitOptions(): Promise<void> {
+    if (this.addOptionsForm.valid && this.createdPollID) {
+      const optionsList = this.options.value;  // Get the options entered by the user
+      console.log('Options entered:', optionsList);
+  
+      if (optionsList.length > 0) {
+        try {
+          // Call the API to add options, passing pollID and the list of options
+          const optionsResponse: any = await this.addOptions(this.createdPollID, optionsList);
+          console.log('Options added response:', optionsResponse);
+  
+          // Check if the options were added successfully
+          if (optionsResponse && optionsResponse.message === 'Options added successfully!') {
+            console.log('Options added successfully:', optionsResponse);
+            
+            // You can use the response (e.g., updated poll data or confirmation)
+            console.log('Poll updated with new options');
+          } else {
+            console.error('Failed to add options, invalid response:', optionsResponse);
+            this.errorMessage = 'Failed to add options. Please try again.';
           }
-        },
-        (error: any) => {
-          // Handle any errors from backend
-          console.error('Poll creation failed:', error);
-          this.isPollCreated = false;
-          this.errorMessage = 'Failed to create poll. Please try again.';
+        } catch (error) {
+          console.error('Error adding options:', error);
+          this.errorMessage = 'Error adding options. Please try again.';
         }
-      );
+      } else {
+        this.errorMessage = 'Please add at least one option before submitting.';
+      }
     }
   }
-
-  // Method to add options to the poll after it's created
-  addOptionsToPoll(pollID: number, options: string[]): void {
-    this.pollService.addOptions(pollID, options).subscribe(
-      (response: any) => {
-        console.log('Options added successfully:', response);
-      },
-      (error: any) => {
-        console.error('Failed to add options:', error);
-      }
-    );
-  }
+  
+  
 }
