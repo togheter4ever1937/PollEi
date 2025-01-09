@@ -1,60 +1,197 @@
 <app-navigationbar></app-navigationbar>
+
 <div class="container mx-auto p-6 max-w-lg">
-  <!-- Error Alert -->
-  <div *ngIf="errorMessage" class="mb-4 p-4 text-red-800 bg-red-100 border border-red-200 rounded-lg">
-    <strong>Error:</strong> {{ errorMessage }}
-    <button (click)="clearError()" class="float-right text-red-600 hover:text-red-800">Dismiss</button>
+ 
+  <div
+    *ngIf="errorMessage"
+    class="mb-4 p-4 bg-red-50 text-red-800 border-l-4 border-red-500 rounded-lg shadow-lg flex items-center space-x-3"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 text-red-600"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M18 8a6 6 0 11-12 0 6 6 0 0112 0zM8.707 8.707a1 1 0 00-1.414-1.414l-2 2a1 1 0 000 1.414l2 2a1 1 0 101.414-1.414L7.414 10l1.293-1.293zM10.586 10l1.293 1.293a1 1 0 101.414-1.414l-2-2a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L10.586 10z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    <span><strong>Error:</strong> {{ errorMessage }}</span>
+    <button
+      (click)="clearError()"
+      class="ml-auto text-red-500 hover:text-red-700 focus:outline-none"
+    >
+      Dismiss
+    </button>
   </div>
 
-  <!-- Create Poll Form -->
-  <form [formGroup]="createPollForm" (ngSubmit)="submitPoll()" class="bg-white shadow-md rounded-lg p-6 mb-6">
-    <h2 class="text-2xl font-semibold mb-4">Create a Poll</h2>
+ 
+  <form
+    [formGroup]="createPollForm"
+    (ngSubmit)="submitPoll()"
+    class="bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-lg p-6 mb-6 border border-gray-200"
+  >
+    <h2 class="text-3xl font-semibold text-gray-800 mb-4">Create a Poll</h2>
 
     <div class="mb-4">
-      <label for="pollName" class="block text-sm font-medium text-gray-700">Poll Name</label>
-      <input id="pollName" formControlName="pollName" type="text" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter poll name" />
-      <p *ngIf="createPollForm.get('pollName')?.invalid && createPollForm.get('pollName')?.touched" class="text-red-600 text-sm">Poll Name is required (min 3 characters).</p>
+      <label for="pollName" class="block text-sm font-medium text-gray-700">
+        Poll Name
+      </label>
+      <div class="relative">
+        <input
+          id="pollName"
+          formControlName="pollName"
+          type="text"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          placeholder="Enter poll name"
+        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="absolute top-2 right-3 h-6 w-6 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 10h18M3 14h18M9 10l2-2m0 0l2 2m-2-2v12"
+          />
+        </svg>
+      </div>
+      <p
+        *ngIf="createPollForm.get('pollName')?.invalid && createPollForm.get('pollName')?.touched"
+        class="text-red-600 text-sm"
+      >
+        Poll Name is required (min 3 characters).
+      </p>
     </div>
 
     <div class="mb-4">
-      <label for="question" class="block text-sm font-medium text-gray-700">Question</label>
-      <input id="question" formControlName="question" type="text" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter the question" />
-      <p *ngIf="createPollForm.get('question')?.invalid && createPollForm.get('question')?.touched" class="text-red-600 text-sm">Question is required (min 5 characters).</p>
+      <label for="question" class="block text-sm font-medium text-gray-700">
+        Question
+      </label>
+      <input
+        id="question"
+        formControlName="question"
+        type="text"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Enter the question"
+      />
+      <p
+        *ngIf="createPollForm.get('question')?.invalid && createPollForm.get('question')?.touched"
+        class="text-red-600 text-sm"
+      >
+        Question is required (min 5 characters).
+      </p>
     </div>
 
-    <div class="mb-4">
-      <label for="start_at" class="block text-sm font-medium text-gray-700">Start Date</label>
-      <input id="start_at" formControlName="start_at" type="datetime-local" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-      <p *ngIf="createPollForm.get('start_at')?.invalid && createPollForm.get('start_at')?.touched" class="text-red-600 text-sm">Start Date is required.</p>
-    </div>
-
-    <div class="mb-4">
-      <label for="end_time" class="block text-sm font-medium text-gray-700">End Date</label>
-      <input id="end_time" formControlName="end_time" type="datetime-local" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-      <p *ngIf="createPollForm.get('end_time')?.invalid && createPollForm.get('end_time')?.touched" class="text-red-600 text-sm">End Date is required.</p>
-    </div>
-
-    <button type="submit" [disabled]="!createPollForm.valid" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">Submit Poll</button>
-  </form>
-
-  <!-- Add Options Form -->
-  <form *ngIf="isPollCreated" [formGroup]="addOptionsForm" (ngSubmit)="submitOptions()" class="bg-white shadow-md rounded-lg p-6 mb-6">
-    <h2 class="text-2xl font-semibold mb-4">Add Options</h2>
-    
-    <!-- Info for options -->
-    <div class="mb-4 text-sm text-gray-600">
-      <p><strong>Info:</strong> Add between 2 to 10 unique options for your poll. Make sure each option is distinct.</p>
-    </div>
-    
-    <div formArrayName="options">
-      <div *ngFor="let option of options.controls; let i = index" class="mb-4 flex items-center space-x-2">
-        <input [formControlName]="i" placeholder="Option" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-        <button type="button" (click)="removeOption(i)" class="text-red-500 hover:text-red-700">Remove</button>
-        <p *ngIf="option.invalid && option.touched" class="text-red-600 text-sm">Option is required.</p>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label for="start_at" class="block text-sm font-medium text-gray-700">
+          Start Date
+        </label>
+        <input
+          id="start_at"
+          formControlName="start_at"
+          type="datetime-local"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+        <p
+          *ngIf="createPollForm.get('start_at')?.invalid && createPollForm.get('start_at')?.touched"
+          class="text-red-600 text-sm"
+        >
+          Start Date is required.
+        </p>
+      </div>
+      <div>
+        <label for="end_time" class="block text-sm font-medium text-gray-700">
+          End Date
+        </label>
+        <input
+          id="end_time"
+          formControlName="end_time"
+          type="datetime-local"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+        <p
+          *ngIf="createPollForm.get('end_time')?.invalid && createPollForm.get('end_time')?.touched"
+          class="text-red-600 text-sm"
+        >
+          End Date is required.
+        </p>
       </div>
     </div>
-    
-    <button type="button" (click)="addOption()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Add Option</button>
-    <button type="submit" [disabled]="!addOptionsForm.valid" class="w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-md mt-4 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Submit Options</button>
+
+    <button
+      type="submit"
+      [disabled]="!createPollForm.valid"
+      class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2 px-4 rounded-lg shadow-md transform transition hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+    >
+      Submit Poll
+    </button>
+  </form>
+
+ 
+  <form
+    *ngIf="isPollCreated"
+    [formGroup]="addOptionsForm"
+    (ngSubmit)="submitOptions()"
+    class="bg-gradient-to-br from-white to-gray-50 shadow-lg rounded-lg p-6 mb-6 mt-8"
+  >
+    <h2 class="text-3xl font-semibold text-gray-800 mb-4">Add Options</h2>
+
+    <div class="mb-4 text-sm text-gray-600">
+      <p>
+        <strong>Info:</strong> Add between 2 to 10 unique options for your poll.
+      </p>
+      <p>
+        <span class="font-bold">Progress:</span>
+        <span
+          class="inline-block w-20 text-center bg-indigo-100 text-indigo-800 font-semibold py-1 px-2 rounded-md"
+        >
+          {{ options.length }}/10
+        </span>
+      </p>
+    </div>
+
+    <div formArrayName="options">
+      <div
+        *ngFor="let option of options.controls; let i = index"
+        class="flex items-center space-x-2 mb-4"
+      >
+        <input
+          [formControlName]="i"
+          placeholder="Option"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+        <button
+          type="button"
+          (click)="removeOption(i)"
+          class="text-red-600 hover:text-red-800 focus:outline-none"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="addOption()"
+      [disabled]="options.length >= 10"
+      class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transform transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+    >
+      Add Option
+    </button>
+    <button
+      type="submit"
+      [disabled]="!addOptionsForm.valid"
+      class="w-full bg-green-500 text-white py-2 px-4 rounded-lg shadow-md mt-4 hover:bg-green-600 transform transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+    >
+      Submit Options
+    </button>
   </form>
 </div>

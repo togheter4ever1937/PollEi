@@ -20,7 +20,7 @@ router.post('/addOptions', authentificated,checkDuplicateOptions,checkOptionsLen
       return res.status(404).json({ message: 'Poll not found.' });
     }
 
-    // Using Promise.all to handle all insert queries
+    
     const insertPromises = options.map(optionContent =>
       db.query('INSERT INTO Poll_options (content, pollID) VALUES (?, ?)', [optionContent, pollID])
     );

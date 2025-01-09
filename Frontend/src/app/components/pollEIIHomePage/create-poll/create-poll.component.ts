@@ -17,7 +17,7 @@ export class CreatePollComponent implements OnInit {
   createPollForm: FormGroup;
   addOptionsForm: FormGroup;
   isPollCreated: boolean = false;
-  createdPollID: number | null = null; // Store created poll ID
+  createdPollID: number | null = null; 
   errorMessage: string = '';
 
   constructor(
@@ -26,7 +26,7 @@ export class CreatePollComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService
   ) {
-    // Initialize the create poll form
+ 
     this.createPollForm = this.fb.group({
       pollName: ['', Validators.required],
       question: ['', Validators.required],
@@ -34,7 +34,7 @@ export class CreatePollComponent implements OnInit {
       end_time: ['', Validators.required],
     });
 
-    // Initialize the add options form
+    
     this.addOptionsForm = this.fb.group({
       options: this.fb.array([]),
     });
@@ -44,7 +44,7 @@ export class CreatePollComponent implements OnInit {
     this.getUserInfo();
   }
 
-  // Getter for options array
+  
   get options(): FormArray {
     return this.addOptionsForm.get('options') as FormArray;
   }
@@ -73,20 +73,20 @@ export class CreatePollComponent implements OnInit {
     if (this.createPollForm.valid) {
       const { pollName, question, start_at, end_time } = this.createPollForm.value;
   
-      // Time validation
+      
       const startTime = new Date(start_at);
       const endTime = new Date(end_time);
       const now = new Date();
   
-      // Check if start time is in the future or now
+      
       if (startTime < now) {
         this.errorMessage = 'Start time must be greater than or equal to the current time.';
         console.error(this.errorMessage);
         return;
       }
   
-      // Check if the difference between start time and end time is at least 30 minutes
-      const diffInMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60); // Difference in minutes
+      
+      const diffInMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60); 
       if (diffInMinutes < 30) {
         this.errorMessage = 'End time must be at least 30 minutes after the start time.';
         console.error(this.errorMessage);
@@ -121,7 +121,7 @@ export class CreatePollComponent implements OnInit {
   
   
 
-  // Manual HTTP call for creating the poll
+  
   createPoll(pollName: string, question: string, start_at: string, end_time: string): Promise<any> {
     const pollData = {
       title: pollName,
@@ -151,7 +151,7 @@ export class CreatePollComponent implements OnInit {
     this.options.removeAt(index);
   }
 
-  // Submit options after the poll is created and the options are filled out
+
   async submitOptions(): Promise<void> {
     if (this.addOptionsForm.invalid || this.options.controls.some(control => control.invalid)) {
       this.errorMessage = 'Please fill out all required fields for options.';
@@ -162,7 +162,7 @@ export class CreatePollComponent implements OnInit {
 
     this.errorMessage = '';
     if (this.addOptionsForm.valid && this.createdPollID) {
-      const optionsList = this.options.value;  // Get the options entered by the user
+      const optionsList = this.options.value;  
       console.log('Options entered:', optionsList);
 
       const uniqueOptions = new Set(optionsList.map((option: string) => option.toLowerCase()));
@@ -178,15 +178,15 @@ export class CreatePollComponent implements OnInit {
   
       if (optionsList.length > 0) {
         try {
-          // Call the API to add options, passing pollID and the list of options
+         
           const optionsResponse: any = await this.addOptions(this.createdPollID, optionsList);
           console.log('Options added response:', optionsResponse);
   
-          // Check if the options were added successfully
+          
           if (optionsResponse && optionsResponse.message === 'Options added successfully!') {
             console.log('Options added successfully:', optionsResponse);
             
-            // You can use the response (e.g., updated poll data or confirmation)
+            
             console.log('Poll updated with new options');
           } else {
             console.error('Failed to add options, invalid response:', optionsResponse);

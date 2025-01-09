@@ -5,10 +5,10 @@ const authentificated = require("../middlewares/autentificated");
 
 router.get("/activePolls",authentificated, async (req, res) => {
     try {
-      const query = "SELECT * FROM polls WHERE end_time > ?";
+      const query = "SELECT * FROM polls WHERE end_time > ? AND start_at < ?;";
       const now = new Date();
   
-      const [activePolls] = await db.promise().query(query, [now]);
+      const [activePolls] = await db.query(query, [now, now]);
   
       res.status(200).send({
         msg: "Active polls retrieved successfully!",
@@ -20,5 +20,5 @@ router.get("/activePolls",authentificated, async (req, res) => {
     }
   });
 
-  
+  module.exports = router;
   

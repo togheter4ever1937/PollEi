@@ -9,7 +9,7 @@ router.get("/endedPolls",authentificated, async (req, res) => {
       const query = "SELECT * FROM polls WHERE end_time <= ?";
       const now = new Date();
   
-      const [endedPolls] = await db.promise().query(query, [now]);
+      const [endedPolls] = await db.query(query, [now]);
   
       res.status(200).send({
         msg: "Ended polls retrieved successfully!",
@@ -20,4 +20,6 @@ router.get("/endedPolls",authentificated, async (req, res) => {
       res.status(500).send({ msg: "Error fetching ended polls", error });
     }
   });
+
+  module.exports = router;
   

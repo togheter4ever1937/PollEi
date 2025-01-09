@@ -6,8 +6,7 @@ function authenticated(req, res, next) {
   const loginHeader = req.headers["authorization"];
   const jwtToken = loginHeader && loginHeader.split(" ")[1];
 
-  // console.log("Authorization Header:", loginHeader); 
-  // console.log("JWT Token:", jwtToken); 
+
 
   if (!jwtToken) {
     return res.status(401).send({ msg: "Access denied, please login!" });

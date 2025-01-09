@@ -11,7 +11,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private route: Router) {}
 
-  // Check if the code is running in the browser
+ 
   private isBrowser(): boolean {
     return (
       typeof window !== 'undefined' &&
@@ -19,25 +19,25 @@ export class AuthService {
     );
   }
 
-  // Decode JWT to get the payload (to extract the expiration time)
+  
   private decodeToken(token: string): any {
     const payload = token.split('.')[1];
     return JSON.parse(atob(payload));
   }
 
-  // Store the token and its expiration time
+  
   login(token: string): void {
     if (this.isBrowser()) {
       localStorage.setItem(this.tokenKey, token);
 
-      // Decode the token to get the expiration time
+      
       const decodedToken = this.decodeToken(token);
-      const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+      const expirationTime = decodedToken.exp * 1000;
       localStorage.setItem(this.tokenExpiryKey, expirationTime.toString());
     }
   }
 
-  // Remove the token and expiration time
+  
   logout(): void {
     if (this.isBrowser()) {
       localStorage.removeItem(this.tokenKey);
@@ -45,7 +45,7 @@ export class AuthService {
     }
   }
 
-  // Check if the token is expired
+  
   isTokenExpired(): boolean {
     if (this.isBrowser()) {
       const expiry = localStorage.getItem(this.tokenExpiryKey);
@@ -55,16 +55,16 @@ export class AuthService {
         return expirationDate < currentDate;
       }
     }
-    return true; // If no expiration time is available, treat the token as expired
+    return true;
   }
 
-  // Check if the user is authenticated (token exists and is not expired)
+  
   isAuthenticated(): boolean {
     if (this.isBrowser()) {
       const token = localStorage.getItem(this.tokenKey);
       if (token) {
         if (this.isTokenExpired()) {
-          this.logout(); // Log out the user if the token is expired
+          this.logout(); 
           return false;
         }
         return true;
@@ -73,7 +73,7 @@ export class AuthService {
     return false;
   }
 
-  // Get the stored token
+  
   getToken(): string | null {
     if (this.isBrowser()) {
       return localStorage.getItem(this.tokenKey);

@@ -7,6 +7,7 @@ const createPoll = require("./routes/createPoll");
 const addOptions = require("./routes/addOptions");
 const activePolls = require("./routes/activePolls");
 const endedPolls = require("./routes/endedPolls");
+const getOptions = require("./routes/getOptions");
 const validateVote = require("./routes/validateVote");
 const usersRouter = require("./routes/utilisateur");
 const signupRouter = require("./routes/signup");
@@ -30,6 +31,11 @@ app.use("/api", signupRouter);
 app.use("/api", loginRouter);
 app.use("/api", createPoll);
 app.use("/api",addOptions);
+app.use("/api",activePolls);
+app.use("/api",endedPolls);
+app.use("/api",getOptions);
+
+
 
 
 
