@@ -185,6 +185,7 @@ export class CreatePollComponent implements OnInit {
           
           if (optionsResponse && optionsResponse.message === 'Options added successfully!') {
             console.log('Options added successfully:', optionsResponse);
+            this.resetForms();
             
             
             console.log('Poll updated with new options');
@@ -200,6 +201,20 @@ export class CreatePollComponent implements OnInit {
         this.errorMessage = 'Please add at least one option before submitting.';
       }
     }
+  }
+
+  resetForms(): void {
+    // Reset the poll creation form
+    this.createPollForm.reset();
+    // Reset the options form array
+    while (this.options.length > 0) {
+      this.options.removeAt(0);
+    }
+    this.addOptionsForm.reset();
+    
+    // Reset UI state
+    this.isPollCreated = false;
+    this.createdPollID = null;
   }
   
   

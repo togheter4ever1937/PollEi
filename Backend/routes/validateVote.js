@@ -16,15 +16,15 @@ router.post("/validateVote", authentificated,checkCreatorVote, async (req, res) 
     try {
       
       const pollQuery = "SELECT * FROM polls WHERE pollID = ?";
-      const [pollResult] = await db.promise().query(pollQuery, [pollID]);
+      const [pollResult] = await db.query(pollQuery, [pollID]);
   
       if (pollResult.length === 0) {
         return res.status(404).send({ msg: "Poll not found!" });
       }
   
       
-      const optionQuery = "SELECT * FROM options WHERE optionID = ? AND pollID = ?";
-      const [optionResult] = await db.promise().query(optionQuery, [optionID, pollID]);
+      const optionQuery = "SELECT * FROM Poll_options WHERE optionID = ? AND pollID = ?";
+      const [optionResult] = await db.query(optionQuery, [optionID, pollID]);
   
       if (optionResult.length === 0) {
         return res.status(404).send({ msg: "Option not found or not associated with the specified poll!" });
@@ -32,7 +32,7 @@ router.post("/validateVote", authentificated,checkCreatorVote, async (req, res) 
   
       
       const voteQuery = "SELECT * FROM votes WHERE pollID = ? AND userID = ?";
-      const [voteResult] = await db.promise().query(voteQuery, [pollID, userID]);
+      const [voteResult] = await db.query(voteQuery, [pollID, userID]);
   
       if (voteResult.length > 0) {
         return res.status(400).send({ msg: "You have already voted in this poll!" });
@@ -44,7 +44,7 @@ router.post("/validateVote", authentificated,checkCreatorVote, async (req, res) 
         VALUES (?, ?, ?, ?)
       `;
       const votedAt = new Date();
-      const [insertResult] = await db.promise().query(insertVoteQuery, [pollID, userID, optionID, votedAt]);
+      const [insertResult] = await db.query(insertVoteQuery, [pollID, userID, optionID, votedAt]);
   
       return res.status(201).send({
         msg: "Vote recorded successfully!",

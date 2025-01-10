@@ -1,4 +1,5 @@
 const express = require('express');
+const db = require('../db/db.connect');
 
 async function checkCreatorVote(req, res, next){
     const { pollID } = req.body;
@@ -12,7 +13,7 @@ async function checkCreatorVote(req, res, next){
     try {
      
       const query = "SELECT userID FROM polls WHERE pollID = ?";
-      const [result] = await db.promise().query(query, [pollID]);
+      const [result] = await db.query(query, [pollID]);
   
       if (result.length === 0) {
         return res.status(404).send({ msg: "Poll not found!" });

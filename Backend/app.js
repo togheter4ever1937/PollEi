@@ -11,6 +11,7 @@ const getOptions = require("./routes/getOptions");
 const validateVote = require("./routes/validateVote");
 const usersRouter = require("./routes/utilisateur");
 const signupRouter = require("./routes/signup");
+const getVotes = require("./routes/getVotes");
 const session = require("express-session");
 
 const corsOptions = {
@@ -34,6 +35,8 @@ app.use("/api",addOptions);
 app.use("/api",activePolls);
 app.use("/api",endedPolls);
 app.use("/api",getOptions);
+app.use("/api",validateVote);
+app.use("/api",getVotes);
 
 
 

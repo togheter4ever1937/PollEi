@@ -50,10 +50,35 @@ export class PollService {
     );
   }
 
+  validateVote(pollID: number, optionID: number): Observable<any> {
+    return this.http.post('http://localhost:3000/api/validateVote', {
+      pollID,
+      optionID,
+    }).pipe(
+      tap((response) => {
+        console.log('Vote validated successfully:', response);
+      }),
+      catchError((error) => {
+        console.error('Error validating vote:', error);
+        return throwError(error);
+      })
+    );
+  }
+  
+
   getOptions(pollID: number): Observable<any> {
     return this.http.get(`http://localhost:3000/api/getOptions/${pollID}`).pipe(
       catchError((error) => {
         console.error('Error fetching poll options:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getVotes(pollID: number): Observable<any> {
+    return this.http.get(`http://localhost:3000/api/getVotes/${pollID}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching votes:', error);
         return throwError(error);
       })
     );
